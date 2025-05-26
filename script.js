@@ -1,6 +1,6 @@
 class WeatherApp {
     constructor() {
-        this.apiKey = 96c63bb1c67aaf3484b715803e8fdef6; // Replace with your OpenWeatherMap API key
+        this.apiKey = '96c63bb1c67aaf3484b715803e8fdef6'; // Replace with your OpenWeatherMap API key
         this.baseUrl = 'https://api.openweathermap.org/data/2.5';
         this.init();
     }
@@ -79,7 +79,7 @@ class WeatherApp {
             }
         );
     }
-
+/*
     async getWeatherByCity(city) {
         this.showLoading();
         
@@ -87,8 +87,26 @@ class WeatherApp {
         setTimeout(() => {
             this.simulateWeatherData(city);
         }, 1500);
+    }*/
+   async getWeatherByCity(city) {
+    this.showLoading();
+    try {
+        const response = await fetch(`${this.baseUrl}/weather?q=${city}&appid=${this.apiKey}&units=metric`);
+        if (!response.ok) throw new Error('City not found');
+        
+        const data = await response.json();
+        this.displayWeather(data);
+        
+        // Get forecast data
+        const forecastResponse = await fetch(`${this.baseUrl}/forecast?q=${city}&appid=${this.apiKey}&units=metric`);
+        const forecastData = await forecastResponse.json();
+        this.displayForecast(forecastData);
+        
+    } catch (error) {
+        this.showError('City not found. Please try again.');
     }
-
+}
+/*
     async getWeatherByCoords(lat, lon) {
         this.showLoading();
         
@@ -96,7 +114,23 @@ class WeatherApp {
         setTimeout(() => {
             this.simulateWeatherData('Your Location');
         }, 1500);
+    }*/
+   async getWeatherByCoords(lat, lon) {
+    this.showLoading();
+    try {
+        const response = await fetch(`${this.baseUrl}/weather?lat=${lat}&lon=${lon}&appid=${this.apiKey}&units=metric`);
+        const data = await response.json();
+        this.displayWeather(data);
+        
+        // Get forecast data
+        const forecastResponse = await fetch(`${this.baseUrl}/forecast?lat=${lat}&lon=${lon}&appid=${this.apiKey}&units=metric`);
+        const forecastData = await forecastResponse.json();
+        this.displayForecast(forecastData);
+        
+    } catch (error) {
+        this.showError('Unable to get weather data.');
     }
+}
 
     // Simulate weather data for demo purposes
     simulateWeatherData(city) {
